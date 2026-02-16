@@ -1,15 +1,16 @@
 const express = require('express');
-const healthRoutes = require('./routes/health.routes');
+const orderRoutes = require('./routes/order.routes');
+const productsRoutes = require('./routes/products.routes');
 
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = 3000;
 
 app.use(express.json());
 
 // rutas
-app.use(healthRoutes);
-
+app.use(productsRoutes);
+app.use(orderRoutes);
 // ruta raíz para probar que el servidor responde
 app.get('/', (req, res) => {
   res.send('API OK. Prueba /health');
