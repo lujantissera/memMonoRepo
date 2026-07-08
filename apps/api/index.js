@@ -24,10 +24,16 @@ app.get('/', (req, res) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const server = app.listen(PORT, '127.0.0.1', () => {
-  console.log(`API running on http://localhost:${PORT}`);
-});
+// en Vercel el servidor corre como función serverless: no hay que hacer listen(),
+// Vercel invoca `app` directamente como handler de cada request.
+if (!process.env.VERCEL) {
+  const server = app.listen(PORT, '127.0.0.1', () => {
+    console.log(`API running on http://localhost:${PORT}`);
+  });
 
-server.on('error', (err) => {
-  console.error('Error al iniciar el servidor:', err);
-});
+  server.on('error', (err) => {
+    console.error('Error al iniciar el servidor:', err);
+  });
+}
+
+module.exports = app;
