@@ -1,54 +1,55 @@
-// simula base de datos de productos
-let products = [
-    { id: 1, name: 'sillon 1', price: 100, color: 'rojo' },
-    { id: 2, name: 'sillon 2', price: 200, color: 'azul' },
-    { id: 3, name: 'sillon 3', price: 300, color: 'verde' },
-];
+const { db } = require('../config/firebase');
 
-let nextId = 4;
-
+const productsCollection = db.collection('products');
 
 // listar todos los productos
-const listProducts = () => {
-    return products;
+const listProducts = async () => {
+  const snapshot = await productsCollection.get();
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
-
 // obtener un producto por id
-const getProductById = (id) =>  
-    { return products.find(product => product.id === id);
-    };
+const getProductById = async (id) => {
+  const doc = await productsCollection.doc(id).get();
+  if (!doc.exists) {
+    return null;
+  }
+  return { id: doc.id, ...doc.data() };
+};
 
 // crear un nuevo producto
-const createProduct = (product) => {
-    const newProduct = { id: nextId++, ...product };
-    products.push(newProduct);
-    return newProduct;
+const createProduct = async (product) => {
+  const docRef = await productsCollection.add(product);
+  return { id: docRef.id, ...product };
 };
 
 // actualizar un producto
-const updateProduct = (id, product) => {
-    const index = products.findIndex(product => product.id === id);
-    if (index !== -1) {
-        products[index] = { id, ...product };
-        return products[index];
-    }
+const updateProduct = async (id, product) => {
+  const docRef = productsCollection.doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) {
     return null;
+  }
+  await docRef.set(product, { merge: true });
+  const updated = await docRef.get();
+  return { id: updated.id, ...updated.data() };
 };
 
 // eliminar un producto
-const deleteProduct = (id) => {
-    const index = products.findIndex(product => product.id === id);
-    if (index !== -1) {
-        return products.splice(index, 1);
-    }
+const deleteProduct = async (id) => {
+  const docRef = productsCollection.doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) {
     return null;
+  }
+  await docRef.delete();
+  return { id };
 };
 
 module.exports = {
-    listProducts,
-    getProductById,
-    createProduct,
-    updateProduct,
-    deleteProduct
+  listProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 };
