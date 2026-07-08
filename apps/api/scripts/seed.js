@@ -1,5 +1,5 @@
-require('dotenv').config();
-const { db } = require('../config/firebase');
+import 'dotenv/config';
+import * as productModel from '../models/product.model.js';
 
 const sampleProducts = [
   { name: 'sillon 1', price: 100, color: 'rojo' },
@@ -8,11 +8,9 @@ const sampleProducts = [
 ];
 
 const seed = async () => {
-  const productsCollection = db.collection('products');
-
   for (const product of sampleProducts) {
-    const docRef = await productsCollection.add(product);
-    console.log(`Producto creado: ${docRef.id} - ${product.name}`);
+    const created = await productModel.create(product);
+    console.log(`Producto creado: ${created.id} - ${product.name}`);
   }
 
   console.log('Seed completado.');

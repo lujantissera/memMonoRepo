@@ -1,21 +1,28 @@
-const admin = require('firebase-admin');
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
-const { FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } = process.env;
+const {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+} = process.env;
 
-if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
+if (!FIREBASE_API_KEY || !FIREBASE_PROJECT_ID || !FIREBASE_APP_ID) {
   throw new Error(
-    'Faltan variables de entorno de Firebase (FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY). Revisá tu archivo .env'
+    'Faltan variables de entorno de Firebase (FIREBASE_API_KEY, FIREBASE_PROJECT_ID, FIREBASE_APP_ID, etc.). Revisá tu archivo .env'
   );
 }
 
-admin.initializeApp({
-  credential: admin.credential.cert({
-    projectId: FIREBASE_PROJECT_ID,
-    clientEmail: FIREBASE_CLIENT_EMAIL,
-    privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  }),
+const firebaseApp = initializeApp({
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
 });
 
-const db = admin.firestore();
-
-module.exports = { admin, db };
+export const db = getFirestore(firebaseApp);

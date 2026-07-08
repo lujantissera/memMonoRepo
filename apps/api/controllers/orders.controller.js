@@ -1,15 +1,15 @@
-const { listOrders, getOrderById, createOrder: createOrderService } = require('../services/order.service');
-const { getProductById } = require('../services/products.service');
-const ApiError = require('../utils/apiError');
+import { listOrders, getOrderById, createOrder as createOrderService } from '../services/order.service.js';
+import { getProductById } from '../services/products.service.js';
+import ApiError from '../utils/apiError.js';
 
-// get all orders GET /orders
-const getOrders = async (req, res) => {
+// get all orders GET /api/orders
+export const getOrders = async (req, res) => {
   const data = await listOrders();
   res.status(200).json(data);
 };
 
-// get order by id GET /orders/:id
-const getOrder = async (req, res) => {
+// get order by id GET /api/orders/:id
+export const getOrder = async (req, res) => {
   const { id } = req.params;
   const order = await getOrderById(id);
   if (!order) {
@@ -18,8 +18,8 @@ const getOrder = async (req, res) => {
   res.status(200).json(order);
 };
 
-// create a new order POST /orders
-const createOrder = async (req, res) => {
+// create a new order POST /api/orders
+export const createOrder = async (req, res) => {
   const { customerId, items } = req.body;
   if (!customerId || !items || items.length === 0) {
     throw new ApiError(400, 'customerId y items son requeridos');
@@ -43,10 +43,4 @@ const createOrder = async (req, res) => {
 
   const created = await createOrderService({ customerId, items: normalizedItems });
   res.status(201).json(created);
-};
-
-module.exports = {
-  getOrders,
-  getOrder,
-  createOrder,
 };

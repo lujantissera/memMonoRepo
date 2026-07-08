@@ -1,21 +1,10 @@
-const { db } = require('../config/firebase');
+import * as orderModel from '../models/order.model.js';
 
-const ordersCollection = db.collection('orders');
+export const listOrders = () => orderModel.findAll();
 
-const listOrders = async () => {
-  const snapshot = await ordersCollection.get();
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-};
+export const getOrderById = (id) => orderModel.findById(id);
 
-const getOrderById = async (id) => {
-  const doc = await ordersCollection.doc(id).get();
-  if (!doc.exists) {
-    return null;
-  }
-  return { id: doc.id, ...doc.data() };
-};
-
-const createOrder = async ({ customerId, items }) => {
+export const createOrder = async ({ customerId, items }) => {
   const status = 'Draft';
   const totalAmount = items.reduce((acc, item) => acc + item.lineTotal, 0);
   const now = new Date().toISOString();
@@ -29,12 +18,5 @@ const createOrder = async ({ customerId, items }) => {
     updatedAt: now,
   };
 
-  const docRef = await ordersCollection.add(newOrder);
-  return { id: docRef.id, ...newOrder };
-};
-
-module.exports = {
-  listOrders,
-  getOrderById,
-  createOrder,
+  return orderModel.create(newOrder);
 };

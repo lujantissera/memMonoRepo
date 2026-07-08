@@ -1,21 +1,22 @@
-const express = require('express');
-const router = express.Router();
-
-const {
+import { Router } from 'express';
+import {
   getProducts,
   getProduct,
   createProduct,
   updateProduct,
   deleteProduct,
   getProductPrice,
-} = require('../controllers/products.controller');
-const asyncHandler = require('../middlewares/asyncHandler');
+} from '../controllers/products.controller.js';
+import asyncHandler from '../middlewares/asyncHandler.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
 
-router.get('/products', asyncHandler(getProducts));
-router.get('/products/:id/price', asyncHandler(getProductPrice));
-router.get('/products/:id', asyncHandler(getProduct));
-router.post('/products', asyncHandler(createProduct));
-router.put('/products/:id', asyncHandler(updateProduct));
-router.delete('/products/:id', asyncHandler(deleteProduct));
+const router = Router();
 
-module.exports = router;
+router.get('/', asyncHandler(getProducts));
+router.get('/:id/price', asyncHandler(getProductPrice));
+router.get('/:id', asyncHandler(getProduct));
+router.post('/create', authMiddleware, asyncHandler(createProduct));
+router.put('/:id', authMiddleware, asyncHandler(updateProduct));
+router.delete('/:id', authMiddleware, asyncHandler(deleteProduct));
+
+export default router;

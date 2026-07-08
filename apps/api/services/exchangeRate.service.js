@@ -1,9 +1,9 @@
-const ApiError = require('../utils/apiError');
+import ApiError from '../utils/apiError.js';
 
 const EXCHANGE_RATE_API_URL = 'https://open.er-api.com/v6/latest/USD';
 
 // consulta una API pública gratuita de tipos de cambio (base USD)
-const getExchangeRate = async (targetCurrency) => {
+export const getExchangeRate = async (targetCurrency) => {
   let response;
   try {
     response = await fetch(EXCHANGE_RATE_API_URL);
@@ -24,5 +24,3 @@ const getExchangeRate = async (targetCurrency) => {
 
   return { rate, base: 'USD', target: targetCurrency, updatedAt: data.time_last_update_utc };
 };
-
-module.exports = { getExchangeRate };

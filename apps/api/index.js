@@ -1,20 +1,25 @@
-require('dotenv').config();
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
-const express = require('express');
-const healthRoutes = require('./routes/healt.routes');
-const orderRoutes = require('./routes/order.routes');
-const productsRoutes = require('./routes/products.routes');
-const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
+import healthRoutes from './routes/healt.routes.js';
+import orderRoutes from './routes/order.routes.js';
+import productsRoutes from './routes/products.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import { notFoundHandler, errorHandler } from './middlewares/errorHandler.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
 // rutas
 app.use(healthRoutes);
-app.use(productsRoutes);
-app.use(orderRoutes);
+app.use('/api/products', productsRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/auth', authRoutes);
 
 // ruta raíz para probar que el servidor responde
 app.get('/', (req, res) => {
@@ -36,4 +41,4 @@ if (!process.env.VERCEL) {
   });
 }
 
-module.exports = app;
+export default app;

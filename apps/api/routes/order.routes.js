@@ -1,15 +1,11 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+import { getOrders, getOrder, createOrder } from '../controllers/orders.controller.js';
+import asyncHandler from '../middlewares/asyncHandler.js';
 
-const {
-  getOrders,
-  getOrder,
-  createOrder,
-} = require('../controllers/orders.controller');
-const asyncHandler = require('../middlewares/asyncHandler');
+const router = Router();
 
-router.get('/orders', asyncHandler(getOrders));
-router.get('/orders/:id', asyncHandler(getOrder));
-router.post('/orders', asyncHandler(createOrder));
+router.get('/', asyncHandler(getOrders));
+router.get('/:id', asyncHandler(getOrder));
+router.post('/', asyncHandler(createOrder));
 
-module.exports = router;
+export default router;
